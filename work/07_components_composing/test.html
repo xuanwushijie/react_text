@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>05_components_composing</title>
+</head>
+<body>
+
+<div id="example"></div>
+
+<script type="text/javascript" src="../js/react.development.js"></script>
+<script type="text/javascript" src="../js/react-dom.development.js"></script>
+<script type="text/javascript" src="../js/prop-types.js"></script>
+<script type="text/javascript" src="../js/babel.min.js"></script>
+<script type="text/babel">
+  class App extends React.Component {
+
+    constructor(props) {
+      super(props)
+      this.state = {
+        todos: ['吃饭', '睡觉', '打游戏']
+      }
+    }
+
+    addTodo = (todo) => {
+      const {todos} = this.state;
+      todos.unshift(todo);
+      this.setState({todos})
+    }
+
+    render() {
+      const {todos} = this.state
+      return (
+              <div>
+                  <Add addTodo={this.addTodo} size={todos.length}/>
+                  <List todos={todos}/>
+              </div>
+      )
+    }
+  }
+
+  class Add extends React.Component {
+    add = () => {
+      const todo = this.refs.inputTodo.value.trim()
+      if (!todo) {
+        return
+      }
+      this.props.addTodo(todo)
+      this.refs.inputTodo.value = ''
+    }
+
+    render() {
+      const {size} = this.props
+      return (
+              <div>
+                  <input type="text" ref='inputTodo'/>
+                  <button onClick={this.add}>Add#{size}</button>
+              </div>
+      )
+    }
+  }
+
+  Add.propTypes = {
+    addTodo: PropTypes.func.isRequired,
+    size: PropTypes.number.isRequired
+  }
+
+  class List extends React.Component {
+    render() {
+      const {todos} = this.props
+      return ( <ul>
+        {todos.map((todo, index) => {
+          return <li key={index}>{todo}</li>
+        })}
+      </ul>)
+    }
+  }
+
+  List.propTypes = {
+    todos: PropTypes.array.isRequired
+  }
+  ReactDOM.render(<App/>, document.getElementById('example'));
+</script>
+</body>
+</html>
